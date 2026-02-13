@@ -103,241 +103,195 @@
 
 <!-- ═══════════════════ ARCHITECTURE TAB ═══════════════════ -->
 <div class="diagram active" id="architecture">
-<svg viewBox="0 0 1100 750" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <marker id="arrowCyan" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#00d4ff"/></marker>
-    <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#00ff88"/></marker>
-    <marker id="arrowRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ff4466"/></marker>
-    <marker id="arrowAmber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ffb700"/></marker>
-    <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#7b61ff"/></marker>
-    <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
+<style>
+  .arch-layer { border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px 20px 14px; margin-bottom: 12px; position: relative; }
+  .arch-layer-title { position: absolute; top: -10px; left: 20px; background: #0a0b10; padding: 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .arch-cards { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .arch-card { background: rgba(255,255,255,0.03); border: 1.5px solid; border-radius: 10px; padding: 14px 18px; min-width: 160px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .arch-card:hover { transform: translateY(-2px); filter: brightness(1.3); }
+  .arch-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .arch-card p { font-size: 10px; color: #777; margin: 0; }
+  .arch-card .fn { font-size: 9px; color: #555; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
 
-  <!-- BACKGROUND REGIONS -->
-  <rect x="20" y="15" width="350" height="140" rx="12" fill="rgba(0,255,136,0.03)" stroke="rgba(0,255,136,0.1)" stroke-dasharray="4"/>
-  <text x="35" y="35" fill="#00ff88" font-size="10" font-weight="600" opacity="0.6">ACCOUNT LAYER</text>
+  .arch-flow { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 0; flex-wrap: wrap; }
+  .arch-arrow { font-size: 18px; line-height: 1; }
+  .arch-flow-label { font-size: 10px; padding: 3px 10px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
 
-  <rect x="400" y="15" width="310" height="140" rx="12" fill="rgba(123,97,255,0.03)" stroke="rgba(123,97,255,0.1)" stroke-dasharray="4"/>
-  <text x="415" y="35" fill="#7b61ff" font-size="10" font-weight="600" opacity="0.6">PERIPHERY</text>
+  .arch-connector { text-align: center; padding: 4px 0; }
+  .arch-connector .arrow-down { display: inline-block; width: 2px; height: 20px; position: relative; }
+  .arch-connector .arrow-down::after { content: '▼'; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); font-size: 10px; }
 
-  <rect x="740" y="15" width="340" height="140" rx="12" fill="rgba(123,97,255,0.03)" stroke="rgba(123,97,255,0.1)" stroke-dasharray="4"/>
-  <text x="755" y="35" fill="#7b61ff" font-size="10" font-weight="600" opacity="0.6">ORDER EXECUTION</text>
+  .arch-side-label { font-size: 9px; color: #555; text-align: center; margin-top: 2px; }
+</style>
 
-  <rect x="20" y="185" width="700" height="200" rx="12" fill="rgba(0,212,255,0.03)" stroke="rgba(0,212,255,0.1)" stroke-dasharray="4"/>
-  <text x="35" y="205" fill="#00d4ff" font-size="10" font-weight="600" opacity="0.6">CORE ENGINE</text>
+<!-- LAYER 1: EXTERNAL (TOP) -->
+<div class="arch-layer" style="border-color: rgba(255,255,255,0.12);">
+  <div class="arch-layer-title" style="color: #888;">EXTERNAL ACTORS</div>
+  <div class="arch-cards">
+    <div class="arch-card" style="border-color: #555;"><h4 style="color:#ddd;">🦊 Trader</h4><p>MetaMask wallet</p></div>
+    <div class="arch-card" style="border-color: #555;"><h4 style="color:#ddd;">🌐 Frontend</h4><p>Lovable / Vercel</p></div>
+    <div class="arch-card" style="border-color: #555;"><h4 style="color:#ddd;">💰 LP Provider</h4><p>Deposits USDC</p></div>
+    <div class="arch-card" style="border-color: #555;"><h4 style="color:#ddd;">🤖 Keeper Bot</h4><p>Liquidations &amp; orders</p></div>
+    <div class="arch-card" style="border-color: #555;"><h4 style="color:#ddd;">🏦 Treasury</h4><p>Protocol revenue</p></div>
+    <div class="arch-card" style="border-color: #ffb700;"><h4 style="color:#ffb700;">🔮 Pyth Network</h4><p>Price feeds</p></div>
+  </div>
+</div>
 
-  <rect x="740" y="185" width="340" height="200" rx="12" fill="rgba(255,183,0,0.03)" stroke="rgba(255,183,0,0.1)" stroke-dasharray="4"/>
-  <text x="755" y="205" fill="#ffb700" font-size="10" font-weight="600" opacity="0.6">ORACLE &amp; CONFIG</text>
+<!-- FLOW ARROW -->
+<div class="arch-flow">
+  <span class="arch-flow-label" style="color:#00ff88;">Trader signs TX</span>
+  <span class="arch-arrow" style="color:#00ff88;">↓</span>
+  <span class="arch-flow-label" style="color:#00d4ff;">LP deposits USDC</span>
+  <span class="arch-arrow" style="color:#00d4ff;">↓</span>
+  <span class="arch-flow-label" style="color:#ff4466;">Keeper liquidates</span>
+  <span class="arch-arrow" style="color:#ff4466;">↓</span>
+  <span class="arch-flow-label" style="color:#ffb700;">Pyth prices</span>
+  <span class="arch-arrow" style="color:#ffb700;">↓</span>
+</div>
 
-  <rect x="20" y="415" width="540" height="160" rx="12" fill="rgba(255,68,102,0.03)" stroke="rgba(255,68,102,0.1)" stroke-dasharray="4"/>
-  <text x="35" y="435" fill="#ff4466" font-size="10" font-weight="600" opacity="0.6">SAFETY &amp; RISK MANAGEMENT</text>
+<!-- LAYER 2: ACCOUNT -->
+<div class="arch-layer" style="border-color: rgba(0,255,136,0.2); background: rgba(0,255,136,0.02);">
+  <div class="arch-layer-title" style="color: #00ff88;">ACCOUNT LAYER</div>
+  <div class="arch-cards">
+    <div class="arch-card contract" data-info="account-factory" style="border-color: #00ff88;"><h4 style="color:#00ff88;">AccountFactory</h4><p>Creates per-user accounts</p><div class="fn">createAccount() → MarginAccount</div></div>
+    <div class="arch-card contract" data-info="margin-account" style="border-color: #00ff88;"><h4 style="color:#00ff88;">MarginAccount</h4><p>Per-user wallet · Sub-accounts</p><div class="fn">deposit() · openPosition() · withdraw()</div></div>
+    <div class="arch-card contract" data-info="session-manager" style="border-color: #00ff88;"><h4 style="color:#00ff88;">SessionManager</h4><p>1-click trading · Key delegation</p><div class="fn">createSession() · validateSession()</div></div>
+  </div>
+</div>
 
-  <rect x="580" y="415" width="500" height="160" rx="12" fill="rgba(123,97,255,0.03)" stroke="rgba(123,97,255,0.1)" stroke-dasharray="4"/>
-  <text x="595" y="435" fill="#7b61ff" font-size="10" font-weight="600" opacity="0.6">FEE &amp; INSURANCE</text>
+<!-- FLOW ARROW -->
+<div class="arch-flow">
+  <span class="arch-flow-label" style="color:#00ff88;">MarginAccount calls Router</span>
+  <span class="arch-arrow" style="color:#7b61ff;">↓</span>
+  <span class="arch-flow-label" style="color:#7b61ff;">openPositionFor(account, ...)</span>
+</div>
 
-  <!-- ═══ ACCOUNT LAYER ═══ -->
-  <g class="contract" data-info="margin-account">
-    <rect x="40" y="50" width="160" height="50" rx="8" fill="#0d2a1a" stroke="#00ff88" stroke-width="1.5"/>
-    <text x="120" y="72" text-anchor="middle" fill="#00ff88" font-size="13" font-weight="600">MarginAccount</text>
-    <text x="120" y="88" text-anchor="middle" fill="#666" font-size="9">Per-user wallet</text>
-  </g>
-  <g class="contract" data-info="account-factory">
-    <rect x="210" y="50" width="150" height="50" rx="8" fill="#0d2a1a" stroke="#00ff88" stroke-width="1.5"/>
-    <text x="285" y="72" text-anchor="middle" fill="#00ff88" font-size="12" font-weight="600">AccountFactory</text>
-    <text x="285" y="88" text-anchor="middle" fill="#666" font-size="9">Creates accounts</text>
-  </g>
+<!-- LAYER 3: PERIPHERY -->
+<div class="arch-layer" style="border-color: rgba(123,97,255,0.2); background: rgba(123,97,255,0.02);">
+  <div class="arch-layer-title" style="color: #7b61ff;">PERIPHERY — ENTRY POINTS</div>
+  <div class="arch-cards">
+    <div class="arch-card contract" data-info="router" style="border-color: #7b61ff; min-width: 220px;"><h4 style="color:#7b61ff;">Router ⭐</h4><p>Primary trade entry · USDC transfer · Price updates</p><div class="fn">openPosition() · closePosition() · openPositionFor()</div></div>
+    <div class="arch-card contract" data-info="order-book" style="border-color: #7b61ff;"><h4 style="color:#7b61ff;">OrderBook</h4><p>Limit orders · Trigger prices</p><div class="fn">createOrder() · executeOrder()</div></div>
+  </div>
+</div>
 
-  <!-- ═══ PERIPHERY ═══ -->
-  <g class="contract" data-info="router">
-    <rect x="420" y="50" width="130" height="50" rx="8" fill="#1a1530" stroke="#7b61ff" stroke-width="1.5"/>
-    <text x="485" y="72" text-anchor="middle" fill="#7b61ff" font-size="13" font-weight="600">Router</text>
-    <text x="485" y="88" text-anchor="middle" fill="#666" font-size="9">Trade entry point</text>
-  </g>
-  <g class="contract" data-info="session-manager">
-    <rect x="560" y="50" width="140" height="50" rx="8" fill="#1a1530" stroke="#7b61ff" stroke-width="1.5"/>
-    <text x="630" y="72" text-anchor="middle" fill="#7b61ff" font-size="12" font-weight="600">SessionManager</text>
-    <text x="630" y="88" text-anchor="middle" fill="#666" font-size="9">Key delegation</text>
-  </g>
+<!-- FLOW ARROW -->
+<div class="arch-flow">
+  <span class="arch-flow-label" style="color:#7b61ff;">Router calls PositionManager</span>
+  <span class="arch-arrow" style="color:#00d4ff;">↓</span>
+  <span class="arch-flow-label" style="color:#00d4ff;">USDC goes to Vault</span>
+  <span class="arch-arrow" style="color:#00d4ff;">↓</span>
+  <span class="arch-flow-label" style="color:#ffb700;">getPrice() from Oracle</span>
+</div>
 
-  <!-- ═══ ORDER EXECUTION ═══ -->
-  <g class="contract" data-info="order-book">
-    <rect x="760" y="50" width="140" height="50" rx="8" fill="#1a1530" stroke="#7b61ff" stroke-width="1.5"/>
-    <text x="830" y="72" text-anchor="middle" fill="#7b61ff" font-size="13" font-weight="600">OrderBook</text>
-    <text x="830" y="88" text-anchor="middle" fill="#666" font-size="9">Limit orders</text>
-  </g>
+<!-- LAYER 4: CORE ENGINE -->
+<div class="arch-layer" style="border-color: rgba(0,212,255,0.2); background: rgba(0,212,255,0.02);">
+  <div class="arch-layer-title" style="color: #00d4ff;">CORE ENGINE</div>
+  <div class="arch-cards">
+    <div class="arch-card contract" data-info="position-manager" style="border-color: #00d4ff; min-width: 240px;"><h4 style="color:#00d4ff;">PositionManager ⭐</h4><p>Open · Close · PnL calc · Spread · Fees</p><div class="fn">openPosition() · closePosition() · getPositionPnL()</div></div>
+    <div class="arch-card contract" data-info="vault" style="border-color: #00d4ff; min-width: 220px;"><h4 style="color:#00d4ff;">Vault (ERC4626) ⭐</h4><p>LP pool · spVault shares · 80% max util</p><div class="fn">deposit() · reserveLiquidity() · settlePnL()</div></div>
+    <div class="arch-card contract" data-info="funding-rate" style="border-color: #00d4ff;"><h4 style="color:#00d4ff;">FundingRate</h4><p>OI tracking · Skew-based rates</p><div class="fn">updateFunding() · increaseOI() · decreaseOI()</div></div>
+  </div>
+  <div style="display:flex; justify-content:center; gap: 20px; margin-top: 12px;">
+    <div class="arch-card contract" data-info="usdc" style="border-color: rgba(0,212,255,0.3); border-style: dashed; min-width: 140px;"><h4 style="color:#00d4ff; font-size:12px;">USDC (ERC20)</h4><p>Sole collateral · 6 decimals</p></div>
+  </div>
+</div>
 
-  <!-- ═══ CORE ═══ -->
-  <g class="contract" data-info="position-manager">
-    <rect x="40" y="220" width="200" height="55" rx="8" fill="#0a1a2a" stroke="#00d4ff" stroke-width="1.5"/>
-    <text x="140" y="244" text-anchor="middle" fill="#00d4ff" font-size="14" font-weight="700">PositionManager</text>
-    <text x="140" y="262" text-anchor="middle" fill="#666" font-size="9">Open / Close / PnL</text>
-  </g>
-  <g class="contract" data-info="vault">
-    <rect x="270" y="220" width="170" height="55" rx="8" fill="#0a1a2a" stroke="#00d4ff" stroke-width="1.5"/>
-    <text x="355" y="244" text-anchor="middle" fill="#00d4ff" font-size="14" font-weight="700">Vault (ERC4626)</text>
-    <text x="355" y="262" text-anchor="middle" fill="#666" font-size="9">LP deposits · Liquidity</text>
-  </g>
-  <g class="contract" data-info="funding-rate">
-    <rect x="470" y="220" width="160" height="55" rx="8" fill="#0a1a2a" stroke="#00d4ff" stroke-width="1.5"/>
-    <text x="550" y="244" text-anchor="middle" fill="#00d4ff" font-size="13" font-weight="600">FundingRate</text>
-    <text x="550" y="262" text-anchor="middle" fill="#666" font-size="9">OI tracking · Rates</text>
-  </g>
+<!-- FLOW ARROWS — split into two paths -->
+<div style="display: flex; justify-content: center; gap: 40px; padding: 6px 0;">
+  <div class="arch-flow">
+    <span class="arch-flow-label" style="color:#ffb700;">Oracle reads</span>
+    <span class="arch-arrow" style="color:#ffb700;">→</span>
+  </div>
+  <div class="arch-flow">
+    <span class="arch-flow-label" style="color:#7b61ff;">Fees (0.15%)</span>
+    <span class="arch-arrow" style="color:#7b61ff;">↓</span>
+  </div>
+  <div class="arch-flow">
+    <span class="arch-flow-label" style="color:#ff4466;">Liquidation checks</span>
+    <span class="arch-arrow" style="color:#ff4466;">↓</span>
+  </div>
+</div>
 
-  <g class="contract" data-info="usdc">
-    <rect x="270" y="310" width="170" height="45" rx="8" fill="#0a1a1a" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4"/>
-    <text x="355" y="337" text-anchor="middle" fill="#00d4ff" font-size="12" font-weight="600">USDC (ERC20)</text>
-  </g>
+<!-- SIDE-BY-SIDE: ORACLE + SAFETY + FEES -->
+<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
 
-  <!-- ═══ ORACLE ═══ -->
-  <g class="contract" data-info="oracle">
-    <rect x="760" y="220" width="160" height="55" rx="8" fill="#1a1500" stroke="#ffb700" stroke-width="1.5"/>
-    <text x="840" y="244" text-anchor="middle" fill="#ffb700" font-size="13" font-weight="600">PriceAggregator</text>
-    <text x="840" y="262" text-anchor="middle" fill="#666" font-size="9">Pyth Network</text>
-  </g>
-  <g class="contract" data-info="pair-config">
-    <rect x="760" y="300" width="160" height="50" rx="8" fill="#161616" stroke="#888" stroke-width="1"/>
-    <text x="840" y="322" text-anchor="middle" fill="#ccc" font-size="12" font-weight="600">PairConfig</text>
-    <text x="840" y="338" text-anchor="middle" fill="#666" font-size="9">56 pairs · Leverage · OI caps</text>
-  </g>
+  <!-- ORACLE -->
+  <div class="arch-layer" style="border-color: rgba(255,183,0,0.2); background: rgba(255,183,0,0.02);">
+    <div class="arch-layer-title" style="color: #ffb700;">ORACLE &amp; CONFIG</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="arch-card contract" data-info="oracle" style="border-color: #ffb700;"><h4 style="color:#ffb700;">PriceAggregator</h4><p>Pyth Network · Mock fallback</p><div class="fn">getPrice() · updatePriceFeeds()</div></div>
+      <div class="arch-card contract" data-info="pair-config" style="border-color: #888;"><h4 style="color:#ccc;">PairConfig</h4><p>56 pairs · Leverage · OI caps</p><div class="fn">getPairInfo() · setOICaps()</div></div>
+    </div>
+  </div>
 
-  <!-- ═══ SAFETY ═══ -->
-  <g class="contract" data-info="liquidation">
-    <rect x="40" y="450" width="180" height="55" rx="8" fill="#1a0a10" stroke="#ff4466" stroke-width="1.5"/>
-    <text x="130" y="474" text-anchor="middle" fill="#ff4466" font-size="13" font-weight="600">LiquidationEngine</text>
-    <text x="130" y="490" text-anchor="middle" fill="#666" font-size="9">Maintenance margin · Keepers</text>
-  </g>
-  <g class="contract" data-info="auto-deleverage">
-    <rect x="240" y="450" width="160" height="55" rx="8" fill="#1a0a10" stroke="#ff4466" stroke-width="1.5"/>
-    <text x="320" y="474" text-anchor="middle" fill="#ff4466" font-size="13" font-weight="600">AutoDeleverage</text>
-    <text x="320" y="490" text-anchor="middle" fill="#666" font-size="9">Vault protection · ADL</text>
-  </g>
-  <g class="contract" data-info="insurance-fund">
-    <rect x="600" y="450" width="170" height="55" rx="8" fill="#1a1530" stroke="#7b61ff" stroke-width="1.5"/>
-    <text x="685" y="474" text-anchor="middle" fill="#7b61ff" font-size="13" font-weight="600">InsuranceFund</text>
-    <text x="685" y="490" text-anchor="middle" fill="#666" font-size="9">Bad debt backstop</text>
-  </g>
-  <g class="contract" data-info="fee-distributor">
-    <rect x="790" y="450" width="170" height="55" rx="8" fill="#1a1530" stroke="#7b61ff" stroke-width="1.5"/>
-    <text x="875" y="474" text-anchor="middle" fill="#7b61ff" font-size="13" font-weight="600">FeeDistributor</text>
-    <text x="875" y="490" text-anchor="middle" fill="#666" font-size="9">60/30/10 split</text>
-  </g>
+  <!-- SAFETY -->
+  <div class="arch-layer" style="border-color: rgba(255,68,102,0.2); background: rgba(255,68,102,0.02);">
+    <div class="arch-layer-title" style="color: #ff4466;">SAFETY &amp; RISK</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="arch-card contract" data-info="liquidation" style="border-color: #ff4466;"><h4 style="color:#ff4466;">LiquidationEngine</h4><p>1% maint. margin · Keeper rewards</p><div class="fn">liquidate() → InsuranceFund → ADL</div></div>
+      <div class="arch-card contract" data-info="auto-deleverage" style="border-color: #ff4466;"><h4 style="color:#ff4466;">AutoDeleverage</h4><p>Last resort · Force-close profitable</p><div class="fn">executeADL() when util &gt; 90%</div></div>
+    </div>
+  </div>
 
-  <!-- ═══ EXTERNAL ═══ -->
-  <rect x="20" y="610" width="1060" height="120" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4"/>
-  <text x="35" y="630" fill="#666" font-size="10" font-weight="600">EXTERNAL</text>
+  <!-- FEES -->
+  <div class="arch-layer" style="border-color: rgba(123,97,255,0.2); background: rgba(123,97,255,0.02);">
+    <div class="arch-layer-title" style="color: #7b61ff;">FEE &amp; INSURANCE</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="arch-card contract" data-info="fee-distributor" style="border-color: #7b61ff;"><h4 style="color:#7b61ff;">FeeDistributor</h4><p>60% Treasury · 30% Vault · 10% Insurance</p><div class="fn">distributeFees()</div></div>
+      <div class="arch-card contract" data-info="insurance-fund" style="border-color: #7b61ff;"><h4 style="color:#7b61ff;">InsuranceFund</h4><p>Bad debt backstop · 5% coverage target</p><div class="fn">coverBadDebt() · getHealthStatus()</div></div>
+    </div>
+  </div>
 
-  <g class="contract">
-    <rect x="40" y="645" width="120" height="45" rx="8" fill="#111" stroke="#555" stroke-width="1"/>
-    <text x="100" y="665" text-anchor="middle" fill="#ddd" font-size="11" font-weight="600">🦊 Trader</text>
-    <text x="100" y="680" text-anchor="middle" fill="#666" font-size="9">MetaMask</text>
-  </g>
-  <g class="contract">
-    <rect x="190" y="645" width="140" height="45" rx="8" fill="#111" stroke="#555" stroke-width="1"/>
-    <text x="260" y="665" text-anchor="middle" fill="#ddd" font-size="11" font-weight="600">🌐 Frontend</text>
-    <text x="260" y="680" text-anchor="middle" fill="#666" font-size="9">Lovable / Vercel</text>
-  </g>
-  <g class="contract">
-    <rect x="360" y="645" width="130" height="45" rx="8" fill="#111" stroke="#555" stroke-width="1"/>
-    <text x="425" y="665" text-anchor="middle" fill="#ddd" font-size="11" font-weight="600">💰 LP Provider</text>
-    <text x="425" y="680" text-anchor="middle" fill="#666" font-size="9">Deposits USDC</text>
-  </g>
-  <g class="contract">
-    <rect x="520" y="645" width="130" height="45" rx="8" fill="#111" stroke="#555" stroke-width="1"/>
-    <text x="585" y="665" text-anchor="middle" fill="#ddd" font-size="11" font-weight="600">🤖 Keeper Bot</text>
-    <text x="585" y="680" text-anchor="middle" fill="#666" font-size="9">Supabase + Mac mini</text>
-  </g>
-  <g class="contract">
-    <rect x="680" y="645" width="130" height="45" rx="8" fill="#111" stroke="#555" stroke-width="1"/>
-    <text x="745" y="665" text-anchor="middle" fill="#ddd" font-size="11" font-weight="600">🏦 Treasury</text>
-    <text x="745" y="680" text-anchor="middle" fill="#666" font-size="9">Protocol revenue</text>
-  </g>
-  <g class="contract">
-    <rect x="840" y="645" width="130" height="45" rx="8" fill="#111" stroke="#ffb700" stroke-width="1"/>
-    <text x="905" y="665" text-anchor="middle" fill="#ffb700" font-size="11" font-weight="600">🔮 Pyth Network</text>
-    <text x="905" y="680" text-anchor="middle" fill="#666" font-size="9">Price feeds</text>
-  </g>
+</div>
 
-  <!-- ═══ CONNECTIONS ═══ -->
-  <!-- MarginAccount → Router -->
-  <line x1="200" y1="75" x2="420" y2="75" stroke="#00ff88" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
-  <text x="310" y="68" text-anchor="middle" fill="#00ff88" font-size="8" opacity="0.8">openPositionFor</text>
+<!-- KEY RELATIONSHIPS -->
+<div style="margin-top: 20px;">
+  <h3 style="text-align:center; font-size:14px; color:#fff; margin-bottom: 14px;">Key Relationships</h3>
+  <div class="info-grid" style="margin:0 auto;">
+    <div class="info-card" style="border-color: rgba(0,212,255,0.2);">
+      <h3 style="color:#00d4ff;">📈 Trade Flow</h3>
+      <ul>
+        <li><strong style="color:#ddd;">Trader</strong> → MarginAccount → Router → PositionManager</li>
+        <li>Router transfers USDC to <strong style="color:#ddd;">Vault</strong></li>
+        <li>PositionManager reserves liquidity + records position</li>
+        <li>FundingRate tracks OI skew per pair</li>
+        <li>On close: PnL settled from Vault → Trader</li>
+      </ul>
+    </div>
+    <div class="info-card" style="border-color: rgba(255,68,102,0.2);">
+      <h3 style="color:#ff4466;">🛡 Safety Chain</h3>
+      <ul>
+        <li><strong style="color:#ddd;">Keeper</strong> calls LiquidationEngine.liquidate()</li>
+        <li>If underwater → InsuranceFund.coverBadDebt()</li>
+        <li>If fund empty → AutoDeleverage force-closes profitable positions</li>
+        <li>ADL triggers when vault utilization &gt; 90%</li>
+        <li>Keeper earns 60% of liquidation penalty ($5 for ADL)</li>
+      </ul>
+    </div>
+    <div class="info-card" style="border-color: rgba(123,97,255,0.2);">
+      <h3 style="color:#7b61ff;">💰 Fee Flow</h3>
+      <ul>
+        <li>0.15% on open + 0.15% on close = <strong style="color:#ddd;">0.30% round-trip</strong></li>
+        <li>Fees → FeeDistributor → 60/30/10 split</li>
+        <li>30% back to Vault (LP yield via share appreciation)</li>
+        <li>60% to Treasury (protocol revenue)</li>
+        <li>10% to InsuranceFund (bad debt reserve)</li>
+      </ul>
+    </div>
+    <div class="info-card" style="border-color: rgba(255,183,0,0.2);">
+      <h3 style="color:#ffb700;">🔮 Oracle Integration</h3>
+      <ul>
+        <li>Pyth pull-oracle — user pays update fee with TX</li>
+        <li>PriceAggregator wraps Pyth + mock fallback</li>
+        <li>Used by: PositionManager, LiquidationEngine, OrderBook, ADL</li>
+        <li>PairConfig sets leverage, OI caps, spread per pair</li>
+        <li>Per-pair staleness check (configurable)</li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-  <!-- Factory → MarginAccount -->
-  <line x1="210" y1="75" x2="200" y2="75" stroke="#00ff88" stroke-width="1" stroke-dasharray="3" marker-end="url(#arrowGreen)"/>
-
-  <!-- Router → PositionManager -->
-  <line x1="485" y1="100" x2="140" y2="220" stroke="#7b61ff" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
-  <text x="280" y="155" text-anchor="middle" fill="#7b61ff" font-size="8" opacity="0.8">openPosition(account,...)</text>
-
-  <!-- Router → Vault (USDC transfer) -->
-  <line x1="485" y1="100" x2="355" y2="220" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4" marker-end="url(#arrowCyan)"/>
-  <text x="440" y="160" text-anchor="middle" fill="#00d4ff" font-size="8" opacity="0.7">USDC transfer</text>
-
-  <!-- Router → SessionManager -->
-  <line x1="550" y1="75" x2="560" y2="75" stroke="#7b61ff" stroke-width="1" marker-end="url(#arrowPurple)"/>
-
-  <!-- OrderBook → Router -->
-  <line x1="760" y1="85" x2="550" y2="75" stroke="#7b61ff" stroke-width="1" marker-end="url(#arrowPurple)"/>
-  <text x="660" y="72" text-anchor="middle" fill="#7b61ff" font-size="8" opacity="0.8">execute order</text>
-
-  <!-- PositionManager → Vault -->
-  <line x1="240" y1="247" x2="270" y2="247" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arrowCyan)"/>
-  <text x="255" y="241" text-anchor="middle" fill="#00d4ff" font-size="8" opacity="0.7">reserve</text>
-
-  <!-- PositionManager → FundingRate -->
-  <line x1="240" y1="257" x2="470" y2="247" stroke="#00d4ff" stroke-width="1" marker-end="url(#arrowCyan)"/>
-  <text x="370" y="245" text-anchor="middle" fill="#00d4ff" font-size="8" opacity="0.7">updateOI</text>
-
-  <!-- PositionManager → Oracle -->
-  <line x1="240" y1="240" x2="760" y2="240" stroke="#ffb700" stroke-width="1" stroke-dasharray="3" marker-end="url(#arrowAmber)"/>
-  <text x="520" y="233" text-anchor="middle" fill="#ffb700" font-size="8" opacity="0.7">getPrice(pairId)</text>
-
-  <!-- PositionManager → FeeDistributor -->
-  <path d="M 140 275 L 140 380 L 875 380 L 875 450" stroke="#7b61ff" stroke-width="1" fill="none" stroke-dasharray="3" marker-end="url(#arrowPurple)"/>
-  <text x="500" y="375" text-anchor="middle" fill="#7b61ff" font-size="8" opacity="0.7">trading fees (0.15% open + close)</text>
-
-  <!-- Liquidation → PositionManager -->
-  <line x1="130" y1="450" x2="140" y2="275" stroke="#ff4466" stroke-width="1.5" marker-end="url(#arrowRed)"/>
-  <text x="100" y="370" fill="#ff4466" font-size="8" opacity="0.8">closePosition</text>
-
-  <!-- Liquidation → InsuranceFund -->
-  <line x1="220" y1="477" x2="600" y2="477" stroke="#ff4466" stroke-width="1.5" marker-end="url(#arrowRed)"/>
-  <text x="410" y="470" text-anchor="middle" fill="#ff4466" font-size="8" opacity="0.8">coverBadDebt()</text>
-
-  <!-- Liquidation → AutoDeleverage -->
-  <line x1="220" y1="490" x2="240" y2="477" stroke="#ff4466" stroke-width="1" marker-end="url(#arrowRed)"/>
-
-  <!-- InsuranceFund → Vault (cover) -->
-  <path d="M 685 450 L 685 400 L 355 400 L 355 275" stroke="#7b61ff" stroke-width="1" fill="none" stroke-dasharray="3" marker-end="url(#arrowPurple)"/>
-  <text x="520" y="395" text-anchor="middle" fill="#7b61ff" font-size="8" opacity="0.7">USDC to cover debt</text>
-
-  <!-- FeeDistributor → InsuranceFund -->
-  <line x1="790" y1="477" x2="770" y2="477" stroke="#7b61ff" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
-  <text x="780" y="470" text-anchor="middle" fill="#7b61ff" font-size="8" opacity="0.7">10%</text>
-
-  <!-- AutoDeleverage → PositionManager -->
-  <path d="M 320 450 L 320 380 L 80 380 L 80 275" stroke="#ff4466" stroke-width="1" fill="none" marker-end="url(#arrowRed)"/>
-  <text x="200" y="393" text-anchor="middle" fill="#ff4466" font-size="8" opacity="0.7">force-close profitable positions</text>
-
-  <!-- Oracle → Pyth -->
-  <line x1="905" y1="645" x2="880" y2="275" stroke="#ffb700" stroke-width="1" stroke-dasharray="3" marker-end="url(#arrowAmber)"/>
-
-  <!-- Trader → Frontend → MarginAccount -->
-  <line x1="100" y1="645" x2="120" y2="510" stroke="#888" stroke-width="1" stroke-dasharray="3"/>
-  <line x1="260" y1="645" x2="120" y2="100" stroke="#888" stroke-width="1" stroke-dasharray="3"/>
-
-  <!-- LP → Vault -->
-  <line x1="425" y1="645" x2="355" y2="275" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3" marker-end="url(#arrowCyan)"/>
-  <text x="380" y="560" fill="#00d4ff" font-size="8" opacity="0.7">deposit USDC</text>
-
-  <!-- Keeper → Liquidation + OrderBook -->
-  <line x1="585" y1="645" x2="130" y2="510" stroke="#ff4466" stroke-width="1" stroke-dasharray="3"/>
-  <line x1="585" y1="645" x2="830" y2="100" stroke="#7b61ff" stroke-width="1" stroke-dasharray="3"/>
-
-  <!-- Treasury ← FeeDistributor -->
-  <path d="M 875 505 L 875 560 L 745 560 L 745 645" stroke="#7b61ff" stroke-width="1" fill="none" stroke-dasharray="3" marker-end="url(#arrowPurple)"/>
-  <text x="810" y="555" fill="#7b61ff" font-size="8" opacity="0.7">60% protocol</text>
-</svg>
 </div>
 
 <!-- ═══════════════════ LIQUIDITY FLOW TAB ═══════════════════ -->
