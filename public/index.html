@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SynthPerp DEX — Architecture & Liquidity Flow</title>
+<title>GenDEX — Architecture & Liquidity Flow</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #0a0b10; color: #e0e0e0; font-family: 'Inter', -apple-system, sans-serif; overflow-x: hidden; }
@@ -78,7 +78,7 @@
 <body>
 
 <div class="header">
-  <h1>SynthPerp DEX</h1>
+  <h1>GenDEX</h1>
   <p>Decentralized Synthetic Perpetual Futures Protocol</p>
   <div class="chain">⬡ Base Sepolia (Chain 84532) · Pyth Network Oracles · USDC Collateral</div>
 </div>
@@ -254,9 +254,10 @@
       <ul>
         <li><strong style="color:#ddd;">Trader</strong> → MarginAccount → Router → PositionManager</li>
         <li>Router transfers USDC to <strong style="color:#ddd;">Vault</strong></li>
+        <li>MarginAccount tracks per-position collateral (positionCollateral mapping)</li>
         <li>PositionManager reserves liquidity + records position</li>
         <li>FundingRate tracks OI skew per pair</li>
-        <li>On close: PnL settled from Vault → Trader</li>
+        <li>On close: proper margin unlock via per-position tracking, PnL settled from Vault → Trader</li>
       </ul>
     </div>
     <div class="info-card" style="border-color: rgba(255,68,102,0.2);">
@@ -264,7 +265,7 @@
       <ul>
         <li><strong style="color:#ddd;">Keeper</strong> calls LiquidationEngine.liquidate()</li>
         <li>If underwater → InsuranceFund.coverBadDebt()</li>
-        <li>If fund empty → AutoDeleverage force-closes profitable positions</li>
+        <li>If fund insufficient → emits ADLTriggered event → keeper calls executeADL()</li>
         <li>ADL triggers when vault utilization &gt; 90%</li>
         <li>Keeper earns 60% of liquidation penalty ($5 for ADL)</li>
       </ul>
@@ -481,9 +482,9 @@
   <!-- Liquidation branch -->
   <g><rect x="50" y="510" width="200" height="40" rx="8" fill="#1a0a10" stroke="#ff4466"/><text x="150" y="535" text-anchor="middle" fill="#ff4466" font-size="11">If underwater → InsuranceFund</text></g>
   <line x1="250" y1="530" x2="310" y2="530" stroke="#ff4466" stroke-width="1" marker-end="url(#a7)"/>
-  <g><rect x="310" y="510" width="200" height="40" rx="8" fill="#1a0a10" stroke="#ff4466"/><text x="410" y="535" text-anchor="middle" fill="#ff4466" font-size="11">If fund empty → ADL</text></g>
+  <g><rect x="310" y="510" width="200" height="40" rx="8" fill="#1a0a10" stroke="#ff4466"/><text x="410" y="535" text-anchor="middle" fill="#ff4466" font-size="11">Emits ADLTriggered event</text></g>
   <line x1="510" y1="530" x2="570" y2="530" stroke="#ff4466" stroke-width="1" marker-end="url(#a7)"/>
-  <g><rect x="570" y="510" width="200" height="40" rx="8" fill="#1a0a10" stroke="#ff4466"/><text x="670" y="535" text-anchor="middle" fill="#ff4466" font-size="11">Force-close profitable pos</text></g>
+  <g><rect x="570" y="510" width="200" height="40" rx="8" fill="#1a0a10" stroke="#ff4466"/><text x="670" y="535" text-anchor="middle" fill="#ff4466" font-size="11">Keeper → executeADL()</text></g>
 </svg>
 </div>
 
@@ -609,20 +610,20 @@ function showTab(id) {
 }
 
 const contractInfo = {
-  'router': { title: 'Router', color: '#7b61ff', desc: 'Primary entry point for trades. Handles USDC transfers, price updates, and session key resolution. Supports both direct trading and MarginAccount-delegated trading via *For() functions.', addr: '0x65b9161fEb229DFcD74D451d3705d0ed15aB426B' },
+  'router': { title: 'Router', color: '#7b61ff', desc: 'Primary entry point for trades. Handles USDC transfers, price updates, and session key resolution. Validates MarginAccount callers in O(1) via isValidAccount mapping (no looping). Supports both direct trading and MarginAccount-delegated trading via *For() functions.', addr: '0x65b9161fEb229DFcD74D451d3705d0ed15aB426B' },
   'position-manager': { title: 'PositionManager', color: '#00d4ff', desc: 'Core trading engine. Opens/closes positions, calculates PnL, manages collateral, applies spreads, deducts fees, and coordinates with Vault and FundingRate. Only Router, LiquidationEngine, and ADL can call it.', addr: '0xcF1a6DB195df5c3f3A20D37D58Dc992550fAdF28' },
   'vault': { title: 'Vault (ERC4626)', color: '#00d4ff', desc: 'Liquidity pool for LPs. ERC4626 vault that issues spVault shares. Manages liquidity reservation (80% max util), PnL settlement, fee withdrawals, and 15-min withdrawal cooldown.', addr: '0x07B20E1370a10C8C107A5f8539F9419a927C71cf' },
   'funding-rate': { title: 'FundingRate', color: '#00d4ff', desc: 'Tracks long/short open interest per pair. Calculates continuous funding rate based on OI skew (max 0.01%/hr). Longs pay shorts when skewed long, and vice versa.', addr: '0x8abF46815673B12f44135a77930b3C04dB675248' },
   'oracle': { title: 'PriceAggregator', color: '#ffb700', desc: 'Wraps Pyth Network pull-oracle. Converts Pyth int64+expo to uint256. Supports mock mode for testing. Per-pair staleness checks. Feeds for FX, metals, energy, crypto, equities.', addr: '0x0586C57deaAf990Cae13C0e242C2a7412511343f' },
   'pair-config': { title: 'PairConfig', color: '#888', desc: '56 trading pairs with per-pair settings: max leverage, OI caps (long/short), max position size, spread, borrow rate, active toggle. Categories: FX, metals, energy, crypto, stocks, indices.', addr: '0xC624b6707adbf12302f4ec4A2060cF4c03B46906' },
-  'liquidation': { title: 'LiquidationEngine', color: '#ff4466', desc: 'Monitors positions for liquidation (1% maintenance margin). Keepers call liquidate() and earn 60% of the 5% penalty. Handles bad debt via InsuranceFund, with ADL fallback.', addr: '0xDdf6678AB9aDa698BB61e347F3aDc408a18D872F' },
+  'liquidation': { title: 'LiquidationEngine', color: '#ff4466', desc: 'Monitors positions for liquidation (1% maintenance margin). Keepers call liquidate() and earn 60% of the 5% penalty. Handles bad debt via InsuranceFund. If insurance can\'t fully cover, emits ADLTriggered(positionId, remainingDebt) event for keepers to pick up and call executeADL().', addr: '0xDdf6678AB9aDa698BB61e347F3aDc408a18D872F' },
   'auto-deleverage': { title: 'AutoDeleverage', color: '#ff4466', desc: 'Last-resort vault protection. When utilization > 90%, keepers can force-close the most profitable positions to bring util back to 80%. $5 USDC keeper reward per ADL.', addr: '0x56ee753EEA683F23862172e8764759d164973664' },
   'insurance-fund': { title: 'InsuranceFund', color: '#7b61ff', desc: 'Bad debt backstop funded by 10% of trading fees. Covers losses when liquidated positions are underwater. 5% vault coverage target. Owner can withdraw excess. Triggers ADL if depleted.', addr: '0x4B04a4F0d06208D3849a9C307267B6E5AB37679b' },
   'fee-distributor': { title: 'FeeDistributor', color: '#7b61ff', desc: 'Collects all trading fees (0.15% open + close). Distributes: 60% to Treasury, 30% to Vault (LP yield), 10% to InsuranceFund.', addr: '0xC904B24dD25f5D56FE604F8017f82AE7a8D8325C' },
   'order-book': { title: 'OrderBook', color: '#7b61ff', desc: 'Limit order system. Users place orders with trigger prices. Keepers execute when price conditions are met. 30-day expiry. Supports Pyth price updates on execution.', addr: '0x509DF53b067c7FD05CEF2c4221e1fa9B1aBCE069' },
   'session-manager': { title: 'SessionManager', color: '#7b61ff', desc: 'Ephemeral key delegation for 1-click trading. Main wallet approves a browser-generated session key with expiry and spend cap. No MetaMask popups per trade.', addr: '0x0800f9a34fC7cAa3Eb8204Eb295E9Ee532EBE2F6' },
-  'margin-account': { title: 'MarginAccount', color: '#00ff88', desc: 'Per-user on-chain wallet. Manages sub-accounts with separate balances, locked margin tracking, and position ownership. Session keys with per-trade and total exposure limits.', addr: 'Per-user (created by factory)' },
-  'account-factory': { title: 'MarginAccountFactory', color: '#00ff88', desc: 'Deploys per-user MarginAccount instances. One account per address enforced. Router checks factory to verify MarginAccount callers.', addr: '0xA25A2E3b26295367f32a22f6C393A656e0dc143a' },
+  'margin-account': { title: 'MarginAccount', color: '#00ff88', desc: 'Per-user on-chain wallet. Manages sub-accounts with separate balances and position ownership. Tracks per-position collateral and notional via positionCollateral and positionNotional mappings, ensuring proper margin unlock on close and accurate session key exposure tracking.', addr: 'Per-user (created by factory)' },
+  'account-factory': { title: 'MarginAccountFactory', color: '#00ff88', desc: 'Deploys per-user MarginAccount instances. One account per address enforced. Maintains isValidAccount mapping for O(1) validation by Router.', addr: '0xA25A2E3b26295367f32a22f6C393A656e0dc143a' },
   'usdc': { title: 'USDC', color: '#00d4ff', desc: 'The sole collateral token. All deposits, margins, fees, and settlements are denominated in USDC (6 decimals).', addr: '0x04f9956819ACeD6f8941C6aEb3Fd6Fb120aDB215' },
 };
 
